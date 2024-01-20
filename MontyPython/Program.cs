@@ -111,12 +111,18 @@ namespace MontyPython
             Rectangle rect = new Rectangle(position.X, position.Y, GetWidth(), GetHeight());
             return rect;
         }
+
+        public Storage GetStorage()
+        {
+            return storage;
+        }
     }
 
 
     public enum GameState
     {
         UserChoose, // use choose his door
+        HostOpenDoor,
         HostAsk,
         UserConfirms,
         GameEnd, // end of the game
@@ -137,7 +143,7 @@ namespace MontyPython
         GameState state;
         public MontyGame(int doors_number) {
             this.doors = new List<Door>(doors_number);
-            state = GameState.
+            state = GameState.UserChoose;
         }
 
         public void Init()
@@ -184,10 +190,24 @@ namespace MontyPython
                         if (IsMouseButtonDown(MouseButton.MOUSE_BUTTON_LEFT))
                         {
                             selected = doors[i - 1];
+                            state = GameState.HostOpenDoor;
                         }
                     }
                 }
             }
+            else if (state == GameState.HostOpenDoor)
+            {
+                List<Door> doorWithZonks = doors.Where(door => door.GetStorage() == Storage.Zonk).ToList();
+                for (int i = 0; i < doorWithZonks.Count; i++)
+                {
+                    if (i != doors.IndexOf(selected))
+                    {
+                        doorWithZonks[i].Open();
+                    }
+                }
+                state = GameState.UserConfirms;
+            }
+
             
         }
 
@@ -225,7 +245,7 @@ namespace MontyPython
             InitWindow(800, 600, "Monty Hal");
             SetTargetFPS(60);
             Door.Init();
-            MontyGame game = new(50);
+            MontyGame game = new(30);
             game.Init();
             while (!WindowShouldClose())
             {
