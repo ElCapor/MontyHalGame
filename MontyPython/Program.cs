@@ -124,61 +124,80 @@ namespace MontyPython
 
     class MontyGame
     {
-        Door door1;
-        Door door2;
-        Door door3;
-
-        Door selected; // select door by player
+        // extend the game to n numbers of doors
+        List<Door> doors;
+        
+        Door? selected; // select door by player
 
 
         bool opened_first;
         bool user_choose;
         bool isWin;
 
-        public MontyGame() { }
+        GameState state;
+        public MontyGame(int doors_number) {
+            this.doors = new List<Door>(doors_number);
+            state = GameState.
+        }
 
         public void Init()
         {
-            List<Storage> outcomes = new List<Storage> { Storage.Car, Storage.Zonk, Storage.Zonk };
+            // Create a list with one Car and (numberOfDoors - 1) Zonks
+            List<Storage> outcomes = new List<Storage>();
+            outcomes.Add(Storage.Car);
+
+            for (int i = 0; i < doors.Capacity -1; i++)
+            {
+                outcomes.Add(Storage.Zonk);
+            }
+
+            // Randomize the list
             RandomizeList(outcomes);
-
-            // Assign outcomes to the doors
-            door1 = new(1, DoorState.CLOSED, outcomes[0]);
-            door2 = new(2, DoorState.CLOSED, outcomes[1]);
-            door3 = new(3, DoorState.CLOSED, outcomes[2]);
-
-            int totalWidth = 3 * door_width + 2 * space_between_doors;
+            int maxDoorsInLine = 10; // Adjust this value based on your needs
+            Door fun = new(9999,DoorState.CLOSED, Storage.Zonk); // funny fun
+            int door_width = fun.GetWidth();
+            int door_height = fun.GetHeight();
+            int totalWidth = maxDoorsInLine * door_width + (maxDoorsInLine - 1) * space_between_doors;
             int startX = (GetScreenWidth() - totalWidth) / 2;
+            int startY = 100; // Adjust this value based on your needs
 
-            door1.position = new Vector2(startX, GetScreenHeight() / 2);
-            door2.position = new Vector2(startX + door_width + space_between_doors, GetScreenHeight() / 2);
-            door3.position = new Vector2(startX + 2 * (door_width + space_between_doors), GetScreenHeight() / 2);
+            for (int i = 1; i <= doors.Capacity; i++)
+            {
+                int row = (i - 1) / maxDoorsInLine;
+                int col = (i - 1) % maxDoorsInLine;
+
+                doors.Add(new Door(i, DoorState.CLOSED, outcomes[i - 1]));
+                doors[i - 1].position = new Vector2(startX + col * (door_width + space_between_doors),
+                                                   startY + row * (door_height + vertical_space_between_doors));
+            }
         }
 
         public void Update()
         {
-            if (CheckCollisionPointRec(GetMousePosition(), door1.GetRect()))
+            if (state == GameState.UserChoose)
             {
-                door1.Open();
+                for (int i = 1;
+                i <= doors.Capacity; i++)
+                {
+                    if (CheckCollisionPointRec(GetMousePosition(), doors[i - 1].GetRect()))
+                    {
+                        if (IsMouseButtonDown(MouseButton.MOUSE_BUTTON_LEFT))
+                        {
+                            selected = doors[i - 1];
+                        }
+                    }
+                }
             }
-            if (CheckCollisionPointRec(GetMousePosition(), door2.GetRect()))
-            {
-                door2.Open();
-            }
-            if (CheckCollisionPointRec(GetMousePosition(), door3.GetRect()))
-            {
-                door3.Open();
-            }
-
-
+            
         }
 
         public void Render()
         {
             DrawText("The Monty Hal Game : try your luck and earn a car", 0, 30, 30, Color.RED);
-            door1.Draw();
-            door2.Draw();
-            door3.Draw();
+            for (int i=1; i <= doors.Capacity; i++)
+            {
+                doors[i-1].Draw();
+            }
         }
 
         // Helper method to shuffle the list randomly
@@ -196,8 +215,8 @@ namespace MontyPython
             }
         }
 
-        private const int door_width = 100;  // Adjust this value based on your door texture size
         private const int space_between_doors = 20;  // Adjust this value based on the desired space between doors
+        private const int vertical_space_between_doors = 20;
     }
     internal class Program
     {
@@ -206,7 +225,7 @@ namespace MontyPython
             InitWindow(800, 600, "Monty Hal");
             SetTargetFPS(60);
             Door.Init();
-            MontyGame game = new();
+            MontyGame game = new(50);
             game.Init();
             while (!WindowShouldClose())
             {
