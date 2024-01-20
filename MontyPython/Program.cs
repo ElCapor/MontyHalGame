@@ -133,7 +133,8 @@ namespace MontyPython
         // extend the game to n numbers of doors
         List<Door> doors;
         
-        Door? selected; // select door by player
+        Door selected; // select door by player
+        int hoverIndex; // the currently hovered
 
 
         bool opened_first;
@@ -187,6 +188,8 @@ namespace MontyPython
                 {
                     if (CheckCollisionPointRec(GetMousePosition(), doors[i - 1].GetRect()))
                     {
+                        hoverIndex = i - 1;
+
                         if (IsMouseButtonDown(MouseButton.MOUSE_BUTTON_LEFT))
                         {
                             selected = doors[i - 1];
@@ -207,6 +210,10 @@ namespace MontyPython
                 }
                 state = GameState.UserConfirms;
             }
+            else if (state == GameState.UserConfirms)
+            {
+                
+            }
 
             
         }
@@ -218,6 +225,7 @@ namespace MontyPython
             {
                 doors[i-1].Draw();
             }
+            DrawRectangleLinesEx(doors[hoverIndex].GetRect(), 3, Color.RED);
         }
 
         // Helper method to shuffle the list randomly
