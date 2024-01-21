@@ -5,11 +5,13 @@ set_defaultmode("debug")
 set_encodings("utf-8")
 set_languages("c++20")
 set_warnings("allextra")
-add_requires("raylib", "raygui")
+add_requires("raylib")
+add_requires("raygui")
+
 target("MontyHal") do 
     set_kind("binary")
-    add_packages("raylib", "raygui")
-
+    add_packages("raylib")
+    add_packages("raygui")
     add_includedirs("include")
     add_files("src/**.cpp")
     add_headerfiles("include/**.hpp")

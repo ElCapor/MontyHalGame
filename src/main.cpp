@@ -1,22 +1,20 @@
+#define RAYGUI_IMPLEMENTATION
 #include <raylib.h>
-#include <raygui.h>
+#include <raylib.h>
 #include <Door.hpp>
-
+#include <MontyGame.hpp>
 int main()
 {
     InitWindow(800,600, "Monty Hal Game");
     SetTargetFPS(60);
-    Door::Init();
-    
-    Door d(1, STORAGE_ZONK);
-    d.self.x = 200;
-    d.self.y = 200;
-
+    MontyGame game;
+    game.Init();
     while (!WindowShouldClose())
     {
+        game.Update();
         BeginDrawing();
         ClearBackground(WHITE);
-        d.Draw();
+        game.Render();
         EndDrawing();
     }
     CloseWindow();

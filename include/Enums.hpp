@@ -17,4 +17,9 @@ enum DoorStorage
     STORAGE_CAR
 };
 
+enum GameState
+{
+    GameMainMenu,
+};
+
 #endif
