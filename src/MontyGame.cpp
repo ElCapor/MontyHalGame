@@ -57,11 +57,12 @@ void MontyGame::Render()
             {
                 DrawTexture(backgroundTex, 0, 0, WHITE);
                 DrawTexturePro(titleTex, {0, 0, (float)titleTex.width, (float)titleTex.height},titleFlex->GetRect(), {0,0},0, WHITE );
+                /*
                 windowFlex.DrawBorder();
                 titleFlex->DrawBorder();
                 buttonsFlex->DrawBorder();
                 playBtnFlex->DrawBorder();
-
+                */
                 if (GuiButton(playBtnFlex->GetRect(), "Play"))
                 {
                     printf("Test");
