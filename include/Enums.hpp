@@ -20,6 +20,7 @@ enum DoorStorage
 enum GameState
 {
     GameMainMenu,
+    Game
 };
 
 #endif
